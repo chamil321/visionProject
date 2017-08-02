@@ -24,6 +24,7 @@ LicencePlateDetector::~LicencePlateDetector()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame) {
 
 	bool blnKNNTrainingSuccessful = loadKNNDataAndTrainKNN();           // attempt KNN training

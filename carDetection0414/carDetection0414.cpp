@@ -46,7 +46,7 @@ int main(void) {
 	std::vector<Blob> blobs;
 	cv::Point crossingLine[2];
 	int carCount = 0;	
-	capVideo.open("zz.mp4"); // the location of the video
+	capVideo.open("video2.mp4"); // the location of the video
 
 	if (!capVideo.isOpened()) {                                                 // if unable to open video file
 		std::cout << "Error reading video files" << std::endl << std::endl;      // show error message

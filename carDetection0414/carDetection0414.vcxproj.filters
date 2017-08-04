@@ -30,6 +30,24 @@
     <ClInclude Include="LicencePlateDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Plate Detector\DetectChars.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plate Detector\DetectPlates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plate Detector\DetectPlatesInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plate Detector\PossibleChar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plate Detector\PossiblePlate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plate Detector\Preprocess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +60,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LicencePlateDetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plate Detector\DetectChars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plate Detector\DetectPlates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plate Detector\DetectPlatesInit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plate Detector\PossibleChar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plate Detector\PossiblePlate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plate Detector\Preprocess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

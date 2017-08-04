@@ -23,6 +23,8 @@ const cv::Scalar SCALAR_YELLOW = cv::Scalar(0.0, 255.0, 255.0);
 const cv::Scalar SCALAR_GREEN = cv::Scalar(0.0, 200.0, 0.0);
 const cv::Scalar SCALAR_RED = cv::Scalar(0.0, 0.0, 255.0);
 
+bool show_steps = false;	// make this true to show steps
+
 // function prototypes ////////////////////////////////////////////////////////////////////////////
 void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob> &existingBlobs, std::vector<Blob> &currentFrameBlobs);
 void addBlobToExistingBlobs(Blob &currentFrameBlob, std::vector<Blob> &existingBlobs, int &intIndex);
@@ -112,7 +114,7 @@ int main(void) {
 
 		cv::threshold(imgDifference, imgThresh, 30, 255.0, CV_THRESH_BINARY);
 		imgDifference.release();
-		cv::imshow("imgThresh", imgThresh);
+		if (show_steps) cv::imshow("imgThresh", imgThresh);
 
 
 
@@ -150,14 +152,14 @@ int main(void) {
 		//		contours[j++], &precontours[i];
 		//	}
 		//}
-		drawAndShowContours(imgThresh.size(), contours, "imgContours");
+		if (show_steps) drawAndShowContours(imgThresh.size(), contours, "imgContours");
 		std::vector<std::vector<cv::Point> > convexHulls(contours.size());
 
 		for (unsigned int i = 0; i < contours.size(); i++) {
 			cv::convexHull(contours[i], convexHulls[i]);
 		}
 
-		drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
+		if (show_steps) drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
 
 		for (auto &convexHull : convexHulls) {
 			Blob possibleBlob(convexHull);
@@ -173,7 +175,7 @@ int main(void) {
 			}
 		}
 
-		drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs");
+		if (show_steps) drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs");
 
 		if (blnFirstFrame == true) {
 			for (auto &currentFrameBlob : currentFrameBlobs) {
@@ -184,7 +186,7 @@ int main(void) {
 			matchCurrentFrameBlobsToExistingBlobs(blobs, currentFrameBlobs);
 		}
 
-		drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
+		if (show_steps) drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
 		imgThresh.release();
 		imgFrame2Copy = imgFrame2.clone();          // get another copy of frame 2 since we changed the previous frame 2 copy in the processing above
 		drawBlobInfoOnImage(blobs, imgFrame2Copy);

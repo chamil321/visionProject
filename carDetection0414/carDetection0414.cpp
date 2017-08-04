@@ -194,7 +194,8 @@ int main(void) {
 
 		if (blnAtLeastOneBlobCrossedTheLine == true) {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_GREEN, 2);
-			//detectLicencePlate(imgFrame2Copy,imgFrame2);	// call method to detect no plate
+			detectLicencePlate(imgFrame2Copy,imgFrame2);	// call method to detect no plate
+			
 		}
 		else {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_RED, 2);

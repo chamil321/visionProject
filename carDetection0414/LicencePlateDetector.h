@@ -11,7 +11,6 @@ class LicencePlateDetector
 public:
 	LicencePlateDetector();
 	~LicencePlateDetector();
-	int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame);
 };
 
 #endif // !1

@@ -2,8 +2,10 @@
 #include "LicencePlateDetector.h"
 #include "Plate Detector\DetectPlatesInit.h"
 
+
 LicencePlateDetector::LicencePlateDetector()
 {
+
 }
 
 LicencePlateDetector::~LicencePlateDetector()
@@ -12,7 +14,8 @@ LicencePlateDetector::~LicencePlateDetector()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame) {
+int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame,int &car_count) {
+	bool show_steps = false;	// make this true to show steps
 
 	bool blnKNNTrainingSuccessful = loadKNNDataAndTrainKNN();           // attempt KNN training
 
@@ -49,8 +52,8 @@ int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame) {
 		// suppose the plate with the most recognized chars (the first plate in sorted by string length descending order) is the actual plate
 		PossiblePlate licPlate = vectorOfPossiblePlates.front();
 
-		cv::imshow("imgPlate", licPlate.imgPlate);            // show crop of plate and threshold of plate
-		cv::imshow("imgThresh", licPlate.imgThresh);
+		if(show_steps) cv::imshow("imgPlate", licPlate.imgPlate);            // show crop of plate and threshold of plate
+		if (show_steps) cv::imshow("imgThresh", licPlate.imgThresh);
 
 		if (licPlate.strChars.length() == 0) {                                                      // if no chars were found in the plate
 			std::cout << std::endl << "no characters were detected" << std::endl << std::endl;      // show message
@@ -66,7 +69,7 @@ int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame) {
 
 		cv::imshow("imgOriginalScene", imgOriginalScene);                       // re-show scene image
 
-		cv::imwrite("imgOriginalScene.png", imgOriginalScene);                  // write image out to file
+		cv::imwrite("licence_plates/plate_detect"+std::to_string((car_count))+".png", imgOriginalScene);                  // write image out to file
 	}
 
 	//cv::waitKey(0);                 // hold windows open until user presses a key

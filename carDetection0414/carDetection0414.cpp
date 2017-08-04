@@ -33,7 +33,7 @@ double distanceBetweenPoints(cv::Point point1, cv::Point point2);
 void drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point> > contours, std::string strImageName);
 void drawAndShowContours(cv::Size imageSize, std::vector<Blob> blobs, std::string strImageName);
 bool checkIfBlobsCrossedTheLine(std::vector<Blob> &blobs, int &intHorizontalLinePosition, int &carCount, cv::Mat &imgFrame2Copy);
-int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame);
+int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame,int &car_count);
 void drawBlobInfoOnImage(std::vector<Blob> &blobs, cv::Mat &imgFrame2Copy);
 void drawCarCountOnImage(int &carCount, cv::Mat &imgFrame2Copy);
 //void drawRedRectangleAroundPlate(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
@@ -48,7 +48,7 @@ int main(void) {
 	std::vector<Blob> blobs;
 	cv::Point crossingLine[2];
 	int carCount = 0;	
-	capVideo.open("video2.mp4"); // the location of the video
+	capVideo.open("video3.mp4"); // the location of the video
 
 	if (!capVideo.isOpened()) {                                                 // if unable to open video file
 		std::cout << "Error reading video files" << std::endl << std::endl;      // show error message
@@ -194,7 +194,7 @@ int main(void) {
 
 		if (blnAtLeastOneBlobCrossedTheLine == true) {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_GREEN, 2);
-			detectLicencePlate(imgFrame2Copy,imgFrame2);	// call method to detect no plate
+			detectLicencePlate(imgFrame2Copy,imgFrame2,carCount);	// call method to detect no plate
 			
 		}
 		else {

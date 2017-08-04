@@ -2,6 +2,8 @@
 *.dll
 *.class
 *.exe
+*.png
+*.jpg
 ehthumbs.db
 Thumbs.db
 

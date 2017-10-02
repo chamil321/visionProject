@@ -1,7 +1,13 @@
 #include "stdafx.h"
 #include "LicencePlateDetector.h"
 #include "Plate Detector\DetectPlatesInit.h"
+#include <Windows.h>
+#include <iostream>
+#include <fstream>
+#include <thread>
+#include <cstdio>
 
+void readPlates(int plateno);
 
 LicencePlateDetector::LicencePlateDetector()
 {
@@ -11,6 +17,8 @@ LicencePlateDetector::LicencePlateDetector()
 LicencePlateDetector::~LicencePlateDetector()
 {
 }
+
+int carCount = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +46,7 @@ int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame,int &car_count)
 
 	vectorOfPossiblePlates = detectCharsInPlates(vectorOfPossiblePlates);                               // detect chars in plates
 
-	cv::imshow("imgOriginalScene", imgOriginalScene);           // show scene image
+	//cv::imshow("imgOriginalScene", imgOriginalScene);           // show scene image
 
 	if (vectorOfPossiblePlates.empty()) {                                               // if no plates were found
 		std::cout << std::endl << "no license plates were detected" << std::endl;       // inform user no plates were found
@@ -60,10 +68,26 @@ int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame,int &car_count)
 			return(0);                                                                              // and exit program
 		}
 
+
+		// added for recognition of number plate characters with japan
+		cv::imshow("plate", licPlate.imgPlate);
+		// save the number plate
+		cv::imwrite("plate" + std::to_string(carCount) + ".jpg", licPlate.imgPlate);
+		std::string filename = "-l eng plate" + std::to_string(carCount) + ".jpg out" + std::to_string(carCount);
+		LPCSTR parameters = filename.c_str();
+		//execute the tesseract application to detect characters - it should be in windows system path
+		ShellExecute(NULL, "open","tesseract" , parameters, NULL, SW_SHOWDEFAULT);
+
+		std::thread plate_read_thread(readPlates,carCount);
+		plate_read_thread.detach();
+
+		//increment car count
+		carCount++;
+
 		drawRedRectangleAroundPlate(imgOriginalScene, licPlate);                // draw red rectangle around plate
 
-		std::cout << std::endl << "license plate read from image = " << licPlate.strChars << std::endl;     // write license plate text to std out
-		std::cout << std::endl << "-----------------------------------------" << std::endl;
+		//std::cout << std::endl << "license plate read from image = " << licPlate.strChars << std::endl;     // write license plate text to std out
+		//std::cout << std::endl << "-----------------------------------------" << std::endl;
 
 		writeLicensePlateCharsOnImage(imgOriginalScene, licPlate);              // write license plate text on the image
 
@@ -75,4 +99,28 @@ int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame,int &car_count)
 	//cv::waitKey(0);                 // hold windows open until user presses a key
 
 	return(0);
+}
+
+void readPlates(int plateno) {
+	// read the file written by tesseract
+
+	while (true) {
+		std::string line;
+		std::string filename = "out" + std::to_string(plateno) + ".txt";
+		//std::cout << "reading " << filename << std::endl;
+		std::ifstream myfile(filename);
+		if (myfile.is_open())
+		{
+			while (getline(myfile, line))
+			{
+				std::cout << line << '\n';
+			}
+			myfile.close();
+			std::remove(filename.c_str());
+			break;
+		}
+
+		else std::cout << "plate" + std::to_string(plateno)<<" cannot read" <<std::endl;
+		Sleep(2000);
+	}
 }

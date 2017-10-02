@@ -13,6 +13,7 @@
 //#include "DetectPlates.h"
 //#include "PossiblePlate.h"
 //#include "DetectChars.h"
+#include <windows.h>
 
 //#define SHOW_STEPS            // un-comment or comment this line to show steps or not
 
@@ -40,6 +41,7 @@ void drawCarCountOnImage(int &carCount, cv::Mat &imgFrame2Copy);
 //void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 int main(void) {
 
 	cv::VideoCapture capVideo;
@@ -192,10 +194,17 @@ int main(void) {
 		drawBlobInfoOnImage(blobs, imgFrame2Copy);
 		bool blnAtLeastOneBlobCrossedTheLine = checkIfBlobsCrossedTheLine(blobs, intHorizontalLinePosition, carCount, imgFrame2);
 
+		// plate detection code 
 		if (blnAtLeastOneBlobCrossedTheLine == true) {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_GREEN, 2);
 			detectLicencePlate(imgFrame2Copy,imgFrame2,carCount);	// call method to detect no plate
-			
+
+			//cv::imshow("car", imgFrame2);
+			//imwrite("car" + std::to_string(carCount) + ".jpg", imgFrame2);			
+			//std::string filename = "-l eng car" + std::to_string(carCount) + ".jpg out"+ std::to_string(carCount);
+			//LPCSTR parameters = filename.c_str();
+			//ShellExecute(NULL, "open","tesseract" , parameters, NULL, SW_SHOWDEFAULT);
+
 		}
 		else {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_RED, 2);

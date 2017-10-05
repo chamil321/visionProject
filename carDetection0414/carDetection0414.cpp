@@ -13,6 +13,7 @@
 //#include "DetectPlates.h"
 //#include "PossiblePlate.h"
 //#include "DetectChars.h"
+#include <windows.h>
 
 //#define SHOW_STEPS            // un-comment or comment this line to show steps or not
 
@@ -23,6 +24,8 @@ const cv::Scalar SCALAR_YELLOW = cv::Scalar(0.0, 255.0, 255.0);
 const cv::Scalar SCALAR_GREEN = cv::Scalar(0.0, 200.0, 0.0);
 const cv::Scalar SCALAR_RED = cv::Scalar(0.0, 0.0, 255.0);
 
+bool show_steps = false;	// make this true to show steps
+
 // function prototypes ////////////////////////////////////////////////////////////////////////////
 void matchCurrentFrameBlobsToExistingBlobs(std::vector<Blob> &existingBlobs, std::vector<Blob> &currentFrameBlobs);
 void addBlobToExistingBlobs(Blob &currentFrameBlob, std::vector<Blob> &existingBlobs, int &intIndex);
@@ -31,13 +34,14 @@ double distanceBetweenPoints(cv::Point point1, cv::Point point2);
 void drawAndShowContours(cv::Size imageSize, std::vector<std::vector<cv::Point> > contours, std::string strImageName);
 void drawAndShowContours(cv::Size imageSize, std::vector<Blob> blobs, std::string strImageName);
 bool checkIfBlobsCrossedTheLine(std::vector<Blob> &blobs, int &intHorizontalLinePosition, int &carCount, cv::Mat &imgFrame2Copy);
-int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame);
+int detectLicencePlate(cv::Mat &currentFrame, cv::Mat &pureFrame,int &car_count);
 void drawBlobInfoOnImage(std::vector<Blob> &blobs, cv::Mat &imgFrame2Copy);
 void drawCarCountOnImage(int &carCount, cv::Mat &imgFrame2Copy);
 //void drawRedRectangleAroundPlate(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 //void writeLicensePlateCharsOnImage(cv::Mat &imgOriginalScene, PossiblePlate &licPlate);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 int main(void) {
 
 	cv::VideoCapture capVideo;
@@ -46,7 +50,7 @@ int main(void) {
 	std::vector<Blob> blobs;
 	cv::Point crossingLine[2];
 	int carCount = 0;	
-	capVideo.open("zz.mp4"); // the location of the video
+	capVideo.open("video3.mp4"); // the location of the video
 
 	if (!capVideo.isOpened()) {                                                 // if unable to open video file
 		std::cout << "Error reading video files" << std::endl << std::endl;      // show error message
@@ -112,7 +116,7 @@ int main(void) {
 
 		cv::threshold(imgDifference, imgThresh, 30, 255.0, CV_THRESH_BINARY);
 		imgDifference.release();
-		cv::imshow("imgThresh", imgThresh);
+		if (show_steps) cv::imshow("imgThresh", imgThresh);
 
 
 
@@ -150,14 +154,14 @@ int main(void) {
 		//		contours[j++], &precontours[i];
 		//	}
 		//}
-		drawAndShowContours(imgThresh.size(), contours, "imgContours");
+		if (show_steps) drawAndShowContours(imgThresh.size(), contours, "imgContours");
 		std::vector<std::vector<cv::Point> > convexHulls(contours.size());
 
 		for (unsigned int i = 0; i < contours.size(); i++) {
 			cv::convexHull(contours[i], convexHulls[i]);
 		}
 
-		drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
+		if (show_steps) drawAndShowContours(imgThresh.size(), convexHulls, "imgConvexHulls");
 
 		for (auto &convexHull : convexHulls) {
 			Blob possibleBlob(convexHull);
@@ -173,7 +177,7 @@ int main(void) {
 			}
 		}
 
-		drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs");
+		if (show_steps) drawAndShowContours(imgThresh.size(), currentFrameBlobs, "imgCurrentFrameBlobs");
 
 		if (blnFirstFrame == true) {
 			for (auto &currentFrameBlob : currentFrameBlobs) {
@@ -184,15 +188,23 @@ int main(void) {
 			matchCurrentFrameBlobsToExistingBlobs(blobs, currentFrameBlobs);
 		}
 
-		drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
+		if (show_steps) drawAndShowContours(imgThresh.size(), blobs, "imgBlobs");
 		imgThresh.release();
 		imgFrame2Copy = imgFrame2.clone();          // get another copy of frame 2 since we changed the previous frame 2 copy in the processing above
 		drawBlobInfoOnImage(blobs, imgFrame2Copy);
 		bool blnAtLeastOneBlobCrossedTheLine = checkIfBlobsCrossedTheLine(blobs, intHorizontalLinePosition, carCount, imgFrame2);
 
+		// plate detection code 
 		if (blnAtLeastOneBlobCrossedTheLine == true) {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_GREEN, 2);
-			//detectLicencePlate(imgFrame2Copy,imgFrame2);	// call method to detect no plate
+			detectLicencePlate(imgFrame2Copy,imgFrame2,carCount);	// call method to detect no plate
+
+			//cv::imshow("car", imgFrame2);
+			//imwrite("car" + std::to_string(carCount) + ".jpg", imgFrame2);			
+			//std::string filename = "-l eng car" + std::to_string(carCount) + ".jpg out"+ std::to_string(carCount);
+			//LPCSTR parameters = filename.c_str();
+			//ShellExecute(NULL, "open","tesseract" , parameters, NULL, SW_SHOWDEFAULT);
+
 		}
 		else {
 			cv::line(imgFrame2Copy, crossingLine[0], crossingLine[1], SCALAR_RED, 2);
